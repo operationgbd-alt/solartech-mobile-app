@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "SolarTech",
+    "slug": "solartech",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "solartech",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.solartech.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0066CC",
+        "foregroundImage": "./assets/images/icon.png"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.solartech.app",
+      "minSdkVersion": 24
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/icon.png"
+    },
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#0066CC",
+          "dark": {
+            "backgroundColor": "#000000"
+          }
+        }
+      ],
+      "expo-web-browser"
+    ],
+    "experiments": {
+      "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "11a4e9f4-ba9a-4e5e-b204-15f741b46117"
+      },
+      "apiUrl": "https://solartech-backend-production.up.railway.app/api"
+    }
+  }
+}
