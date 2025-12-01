@@ -198,10 +198,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await api.login(username, password);
       if (result.success && result.data) {
         const { token, user: userData } = result.data;
+        
+        // Validate that we have all required data
+        if (!token || !userData || !userData.role) {
+          console.log('[AUTH LOGIN] Invalid API response - missing token or user data');
+          return { success: false, error: 'Risposta del server non valida. Riprova.' };
+        }
+        
         console.log('[AUTH LOGIN] API login successful, token received');
         const normalizedUser = {
           ...userData,
-          role: userData.role?.toLowerCase() as 'master' | 'ditta' | 'tecnico',
+          role: userData.role.toLowerCase() as 'master' | 'ditta' | 'tecnico',
         };
         await AsyncStorage.setItem(TOKEN_KEY, token);
         await AsyncStorage.setItem(USER_KEY, JSON.stringify(normalizedUser));
@@ -212,6 +219,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { success: true };
       } else {
         console.log('[AUTH LOGIN] API login failed:', result.error);
+        // In production, return the actual error
+        if (!__DEV__) {
+          return { success: false, error: result.error || 'Login fallito. Verifica le credenziali.' };
+        }
       }
     } catch (error: any) {
       console.log('[AUTH LOGIN] API login network error:', error);
