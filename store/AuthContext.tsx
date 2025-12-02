@@ -206,10 +206,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         
         console.log('[AUTH LOGIN] API login successful, token received');
+        console.log('[AUTH LOGIN] User data received:', JSON.stringify(userData));
+        
+        // Map backend response to our User type
+        // Backend returns company: { id, name } but we need companyId and companyName
         const normalizedUser = {
-          ...userData,
+          id: userData.id,
+          username: userData.username,
+          name: userData.name,
+          email: userData.email,
           role: userData.role.toLowerCase() as 'master' | 'ditta' | 'tecnico',
+          companyId: userData.company?.id || userData.companyId || null,
+          companyName: userData.company?.name || userData.companyName || null,
         };
+        console.log('[AUTH LOGIN] Normalized user:', JSON.stringify(normalizedUser));
+        
         await AsyncStorage.setItem(TOKEN_KEY, token);
         await AsyncStorage.setItem(USER_KEY, JSON.stringify(normalizedUser));
         api.setToken(token);
