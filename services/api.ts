@@ -71,11 +71,18 @@ interface LoginResponse {
   user: {
     id: string;
     username: string;
-    role: 'master' | 'ditta' | 'tecnico';
+    role: 'master' | 'ditta' | 'tecnico' | 'MASTER' | 'DITTA' | 'TECNICO';
     name: string;
     email: string;
-    companyId: string | null;
-    companyName: string | null;
+    phone?: string;
+    // Backend returns company object, not companyId/companyName
+    company?: {
+      id: string;
+      name: string;
+    } | null;
+    // For backwards compatibility
+    companyId?: string | null;
+    companyName?: string | null;
   };
 }
 
@@ -189,18 +196,26 @@ class ApiService {
         };
       }
       
-      const data = await response.json();
+      const responseData = await response.json();
 
       if (!response.ok) {
-        console.log('[API] Response error:', data.error);
+        console.log('[API] Response error:', responseData.error);
         return {
           success: false,
-          error: data.error || `HTTP ${response.status}`,
+          error: responseData.error || `HTTP ${response.status}`,
         };
       }
 
       console.log('[API] Response success');
-      return { success: true, data };
+      
+      // Backend wraps responses in { success: true, data: {...} }
+      // We need to unwrap and return just the inner data
+      if (responseData && responseData.success && responseData.data !== undefined) {
+        return { success: true, data: responseData.data };
+      }
+      
+      // For responses that are not wrapped (like arrays or direct objects)
+      return { success: true, data: responseData };
     } catch (error) {
       console.log('[API] Network error:', error);
       return {
